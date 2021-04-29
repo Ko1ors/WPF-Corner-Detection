@@ -1,6 +1,11 @@
-﻿using Microsoft.Win32;
+﻿using Emgu.CV;
+using Emgu.CV.Structure;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -43,7 +48,64 @@ namespace Wpf_Corner_Detection
 
         private void processButton_Click(object sender, RoutedEventArgs e)
         {
+            // var img = BitmapImageToBitmap(image.Source as BitmapImage);
+            var img = new Bitmap(imagePath);
+            var outputImg = img.ToImage<Bgr, byte>();
 
+            //var gray = outputImg.Convert<Gray, byte>().ThresholdBinaryInv(new Gray(200), new Gray(255));
+            var gray = outputImg.Convert<Gray, byte>();
+
+            var corners = new Mat();
+            CvInvoke.CornerHarris(gray, corners, 2);
+            CvInvoke.Normalize(corners, corners, 255, 0, Emgu.CV.CvEnum.NormType.MinMax);
+
+            Matrix<float> matrix = new Matrix<float>(corners.Rows, corners.Cols);
+            corners.CopyTo(matrix);
+
+            for (int i = 0; i < matrix.Rows; i++)
+            {
+                for (int j = 0; j < matrix.Cols; j++)
+                {
+                    if (matrix[i, j] > 100)
+                    {
+                        CvInvoke.Circle(outputImg, new System.Drawing.Point(j, i), 1, new MCvScalar(0, 150, 255), 25);
+                    }
+                }
+            }
+            outputImg.AsBitmap().Save("test.png", ImageFormat.Png);
+            imageResult.Source = BitmapToBitmapImage(outputImg.AsBitmap());
+        }
+
+        private BitmapImage BitmapToBitmapImage(Bitmap bitmap)
+        {
+            using (var memory = new MemoryStream())
+            {
+                bitmap.Save(memory, ImageFormat.Png);
+                memory.Position = 0;
+
+                var bitmapImage = new BitmapImage();
+                bitmapImage.BeginInit();
+                bitmapImage.StreamSource = memory;
+                bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+                bitmapImage.EndInit();
+                bitmapImage.Freeze();
+
+                return bitmapImage;
+            }
+        }
+
+        private Bitmap BitmapImageToBitmap(BitmapImage bitmapImage)
+        {
+
+            using (MemoryStream outStream = new MemoryStream())
+            {
+                BitmapEncoder enc = new BmpBitmapEncoder();
+                enc.Frames.Add(BitmapFrame.Create(bitmapImage));
+                enc.Save(outStream);
+                System.Drawing.Bitmap bitmap = new Bitmap(outStream);
+
+                return new Bitmap(bitmap);
+            }
         }
     }
 }
