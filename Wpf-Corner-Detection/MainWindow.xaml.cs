@@ -48,32 +48,44 @@ namespace Wpf_Corner_Detection
 
         private void processButton_Click(object sender, RoutedEventArgs e)
         {
-            // var img = BitmapImageToBitmap(image.Source as BitmapImage);
-            var img = new Bitmap(imagePath);
-            var outputImg = img.ToImage<Bgr, byte>();
-
-            //var gray = outputImg.Convert<Gray, byte>().ThresholdBinaryInv(new Gray(200), new Gray(255));
-            var gray = outputImg.Convert<Gray, byte>();
-
-            var corners = new Mat();
-            CvInvoke.CornerHarris(gray, corners, 2);
-            CvInvoke.Normalize(corners, corners, 255, 0, Emgu.CV.CvEnum.NormType.MinMax);
-
-            Matrix<float> matrix = new Matrix<float>(corners.Rows, corners.Cols);
-            corners.CopyTo(matrix);
-
-            for (int i = 0; i < matrix.Rows; i++)
+            try
             {
-                for (int j = 0; j < matrix.Cols; j++)
+                // var img = BitmapImageToBitmap(image.Source as BitmapImage);
+                var img = new Bitmap(imagePath);
+                var outputImg = img.ToImage<Bgr, byte>();
+
+                //var gray = outputImg.Convert<Gray, byte>().ThresholdBinaryInv(new Gray(200), new Gray(255));
+                var gray = outputImg.Convert<Gray, byte>();
+
+                var corners = new Mat();
+                CvInvoke.CornerHarris(gray, corners, 2);
+                CvInvoke.Normalize(corners, corners, 255, 0, Emgu.CV.CvEnum.NormType.MinMax);
+
+                Matrix<float> matrix = new Matrix<float>(corners.Rows, corners.Cols);
+                corners.CopyTo(matrix);
+                using (Graphics g = Graphics.FromImage(img))
                 {
-                    if (matrix[i, j] > 100)
+                    var pen = new System.Drawing.Pen(System.Drawing.Color.DarkViolet, 3);
+                    for (int i = 0; i < matrix.Rows; i++)
                     {
-                        CvInvoke.Circle(outputImg, new System.Drawing.Point(j, i), 1, new MCvScalar(0, 150, 255), 25);
+                        for (int j = 0; j < matrix.Cols; j++)
+                        {
+                            if (matrix[i, j] > 100)
+                            {
+                                //CvInvoke.Circle(outputImg, new System.Drawing.Point(j, i), 1, new MCvScalar(0, 150, 255), 25);
+                                g.DrawEllipse(pen, new System.Drawing.Rectangle(j - 3, i - 3, 6, 6));
+                            }
+                        }
                     }
                 }
+                //outputImg.AsBitmap().Save("test.png", ImageFormat.Png);
+                //imageResult.Source = BitmapToBitmapImage(outputImg.AsBitmap());
+                imageResult.Source = BitmapToBitmapImage(img);
             }
-            outputImg.AsBitmap().Save("test.png", ImageFormat.Png);
-            imageResult.Source = BitmapToBitmapImage(outputImg.AsBitmap());
+            catch(Exception e1)
+            {
+                MessageBox.Show("Error: " + e1.Message);
+            }
         }
 
         private BitmapImage BitmapToBitmapImage(Bitmap bitmap)
