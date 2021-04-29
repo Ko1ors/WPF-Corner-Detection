@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31205.134
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wpf-Corner-Detection", "Wpf-Corner-Detection\Wpf-Corner-Detection.csproj", "{53C08645-A536-4DF5-B6F7-7FEC9F44E16D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{53C08645-A536-4DF5-B6F7-7FEC9F44E16D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53C08645-A536-4DF5-B6F7-7FEC9F44E16D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53C08645-A536-4DF5-B6F7-7FEC9F44E16D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53C08645-A536-4DF5-B6F7-7FEC9F44E16D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {257BFFB8-5EB1-43C4-BA1E-48E7D02A1289}
+	EndGlobalSection
+EndGlobal
