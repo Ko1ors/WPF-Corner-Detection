@@ -1,13 +1,17 @@
 ﻿using Emgu.CV;
+using Emgu.CV.Features2D;
 using Emgu.CV.Structure;
+using Emgu.CV.Util;
 using Microsoft.Win32;
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using static Emgu.CV.Features2D.FastFeatureDetector;
 
 namespace Wpf_Corner_Detection
 {
@@ -98,8 +102,16 @@ namespace Wpf_Corner_Detection
                 var gray = outputImg.Convert<Gray, byte>();
 
                 int threshold = Convert.ToInt32(thresholdSlider.Value);
+                var nonmaxSupression = checkBoxSuppresion.IsChecked.Value;
+                var useFiltering = checkBoxUseAngleFiltering.IsChecked.Value;
 
-                var detector = new Emgu.CV.Features2D.FastFeatureDetector(threshold: threshold);
+                var lowerLimit = Convert.ToDouble(textBoxLowerLimit.Text);
+                var upperLimit = Convert.ToDouble(textBoxUpperLimit.Text);
+                Feature2D detector;
+                if (useFiltering)
+                    detector = new Emgu.CV.Features2D.ORBDetector(fastThreshold: threshold);
+                else
+                    detector = new Emgu.CV.Features2D.FastFeatureDetector(threshold: threshold, nonmaxSupression: nonmaxSupression);
 
                 var keyPoints = detector.Detect(gray);
 
@@ -109,7 +121,8 @@ namespace Wpf_Corner_Detection
 
                     foreach (var kp in keyPoints)
                     {
-                        g.DrawEllipse(pen, new RectangleF(kp.Point.X-3, kp.Point.Y-3, 6, 6));
+                            if (!useFiltering || (kp.Angle >= lowerLimit && kp.Angle <= upperLimit))
+                                g.DrawEllipse(pen, new RectangleF(kp.Point.X - 3, kp.Point.Y - 3, 6, 6));
                     }
                 }
 
@@ -163,7 +176,34 @@ namespace Wpf_Corner_Detection
                     method = DetectionMethod.HarrisDetector;
                 else if (content.Contains("FAST"))
                     method = DetectionMethod.FASTDetector;
-            }             
+                ChangeSettingsBox();
+            }
+        }
+
+        private void ChangeSettingsBox()
+        {
+            switch (method)
+            {
+                case DetectionMethod.HarrisDetector:
+                    groupBoxHarrisSettings.Visibility = Visibility.Visible;
+                    groupBoxFASTSettings.Visibility = Visibility.Collapsed;
+                    break;
+                case DetectionMethod.FASTDetector:
+                    groupBoxFASTSettings.Visibility = Visibility.Visible;
+                    groupBoxHarrisSettings.Visibility = Visibility.Collapsed;
+                    break;
+            }
+        }
+
+        private void checkBoxUseAngleFiltering_Checked(object sender, RoutedEventArgs e)
+        {
+            stackPanelLimit.Visibility = Visibility.Visible;
+
+        }
+
+        private void checkBoxUseAngleFiltering_Unchecked(object sender, RoutedEventArgs e)
+        {
+            stackPanelLimit.Visibility = Visibility.Collapsed;
         }
     }
 }

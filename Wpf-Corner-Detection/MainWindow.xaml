@@ -11,7 +11,7 @@
             <RowDefinition Height="35"/>
             <RowDefinition Height="5*"/>
             <RowDefinition Height="40*"/>
-            <RowDefinition Height="5*"/>
+            <RowDefinition Height="8*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -40,15 +40,19 @@
             <Image x:Name="imageResult"/>
         </Border>
         
-        <StackPanel Grid.Row="4" Grid.ColumnSpan="2" Orientation="Horizontal"  Margin="10,0,10,0">
-            <TextBlock Text="Threshold" FontFamily="Arial Black" FontSize="15" VerticalAlignment="Center"/>
+        <StackPanel Grid.Row="4" Grid.ColumnSpan="2" Orientation="Horizontal"  Margin="10,0,10,5">
+            <GroupBox Header="General Settings" FontFamily="Arial Black" FontSize="12">
+                <StackPanel Orientation="Horizontal">
+            <TextBlock Text="Threshold" FontFamily="Arial Black" FontSize="13" VerticalAlignment="Center"/>
             <Separator Opacity="0" Width="5"/>
 
             <Slider x:Name="thresholdSlider" Value="100" Minimum="1" Maximum="300" MinWidth="200"  TickFrequency="25" VerticalAlignment="Center" TickPlacement="BottomRight" AutoToolTipPlacement="TopLeft"/>
             
             <Separator Opacity="0" Width="5"/>
 
-            <TextBlock Text="{Binding Path=Value, ElementName=thresholdSlider, StringFormat={}{0:N0}}" FontFamily="Arial Black" FontSize="15" VerticalAlignment="Center"/>
+            <TextBlock Text="{Binding Path=Value, ElementName=thresholdSlider, StringFormat={}{0:N0}}" FontFamily="Arial Black" FontSize="13" VerticalAlignment="Center"/>
+                </StackPanel>
+            </GroupBox>
 
             <Separator Opacity="0" Width="5"/>
 
@@ -56,11 +60,57 @@
             
             <Separator Opacity="0" Width="5"/>
 
-            <TextBlock Text="K" FontFamily="Arial Black" FontSize="15" VerticalAlignment="Center"/>
+            <GroupBox x:Name="groupBoxHarrisSettings" Header="Harris detector settings" FontFamily="Arial Black" FontSize="12">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="K" FontFamily="Arial Black" FontSize="13" VerticalAlignment="Center"/>
 
-            <Separator Opacity="0" Width="5"/>
+                    <Separator Opacity="0" Width="5"/>
             
-            <TextBox x:Name="textBoxK" Text="0,01" FontFamily="Arial Black" MinWidth="70" FontSize="15" VerticalAlignment="Center" HorizontalContentAlignment="Center"/>
+                    <TextBox x:Name="textBoxK" Text="0,01" FontFamily="Arial Black" MinWidth="70" FontSize="13" VerticalAlignment="Center" HorizontalContentAlignment="Center"/>
+                </StackPanel>
+            </GroupBox>
+
+            <GroupBox x:Name="groupBoxFASTSettings" Header="FAST detector settings" FontFamily="Arial Black" FontSize="12" Visibility="Collapsed">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <CheckBox x:Name="checkBoxSuppresion" Content="nonmaxsuppresion" IsChecked="True" FontFamily="Arial Black" FontSize="12" VerticalAlignment="Center"/>
+                    
+                    <Separator Opacity="0" Width="3"/>
+                    
+                    <Rectangle Fill="SlateBlue" Width="1"/>
+
+                    <Separator Opacity="0" Width="3"/>
+
+                    <CheckBox x:Name="checkBoxUseAngleFiltering" Content="filter corners" FontFamily="Arial Black" FontSize="12" VerticalAlignment="Center" Checked="checkBoxUseAngleFiltering_Checked" Unchecked="checkBoxUseAngleFiltering_Unchecked"/>
+
+                    <Separator Opacity="0" Width="3"/>
+
+                    <StackPanel x:Name="stackPanelLimit" Visibility="Collapsed" Orientation="Horizontal">
+
+                        <Rectangle Fill="SlateBlue" Width="1"/>
+
+                        <Separator Opacity="0" Width="3"/>
+
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Lower limit" FontFamily="Arial Black" MinWidth="80" FontSize="13" VerticalAlignment="Center"/>
+                        
+                                 <Separator Opacity="0" Width="5"/>
+
+                                <TextBox x:Name="textBoxLowerLimit" Text="45" FontFamily="Arial Black" MinWidth="50" FontSize="13" HorizontalContentAlignment="Center"/>
+                            </StackPanel>
+                            
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Upper limit" FontFamily="Arial Black" MinWidth="80" FontSize="13" VerticalAlignment="Center"/>
+
+                                <Separator Opacity="0" Width="5"/>
+
+                                <TextBox x:Name="textBoxUpperLimit" Text="120" FontFamily="Arial Black" MinWidth="50" FontSize="13" HorizontalContentAlignment="Center"/>
+                            </StackPanel>
+                            
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
         </StackPanel>
     </Grid>
 </Window>
