@@ -18,7 +18,7 @@ namespace Wpf_Corner_Detection
     {
         private string imagePath;
 
-        private RadioButton radioButton;
+        private DetectionMethod method;
 
 
         public MainWindow()
@@ -41,9 +41,9 @@ namespace Wpf_Corner_Detection
 
         private void processButton_Click(object sender, RoutedEventArgs e)
         {
-            if (radioButton.Content.ToString().Contains("Harris"))
+            if (method == DetectionMethod.HarrisDetector)
                 HarrisDetector();
-            else if (radioButton.Content.ToString().Contains("FAST"))
+            else if (method == DetectionMethod.FASTDetector)
                 FASTFeatureDetector();
         }
 
@@ -97,7 +97,9 @@ namespace Wpf_Corner_Detection
                 var outputImg = img.ToImage<Bgr, byte>();
                 var gray = outputImg.Convert<Gray, byte>();
 
-                var detector = new Emgu.CV.Features2D.FastFeatureDetector();
+                int threshold = Convert.ToInt32(thresholdSlider.Value);
+
+                var detector = new Emgu.CV.Features2D.FastFeatureDetector(threshold: threshold);
 
                 var keyPoints = detector.Detect(gray);
 
@@ -154,8 +156,14 @@ namespace Wpf_Corner_Detection
         private void RadioButton_Checked(object sender, RoutedEventArgs e)
         {
             var rb = sender as RadioButton;
-            if (rb.IsChecked.Value)
-                radioButton = rb;
+            if (rb.IsChecked.Value && rb.Content is not null)
+            {
+                var content = rb.Content.ToString();
+                if (content.Contains("Harris"))
+                    method = DetectionMethod.HarrisDetector;
+                else if (content.Contains("FAST"))
+                    method = DetectionMethod.FASTDetector;
+            }             
         }
     }
 }
