@@ -5,12 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Wpf_Corner_Detection"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="500" Width="800">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="35"/>
             <RowDefinition Height="5*"/>
-            <RowDefinition Height="25*"/>
+            <RowDefinition Height="40*"/>
+            <RowDefinition Height="5*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -27,6 +28,28 @@
         <Border Grid.Row="2" Grid.Column="1" Margin="5" BorderBrush="SlateBlue" BorderThickness="1">
             <Image x:Name="imageResult"/>
         </Border>
+        <StackPanel Grid.Row="4" Grid.ColumnSpan="2" Orientation="Horizontal"  Margin="10,0,10,0">
+            <TextBlock Text="Threshold" FontFamily="Arial Black" FontSize="15" VerticalAlignment="Center"/>
+            <Separator Opacity="0" Width="5"/>
+
+            <Slider x:Name="thresholdSlider" Value="100" Minimum="1" Maximum="300" MinWidth="200"  TickFrequency="25" VerticalAlignment="Center" TickPlacement="BottomRight" AutoToolTipPlacement="TopLeft"/>
+            
+            <Separator Opacity="0" Width="5"/>
+
+            <TextBlock Text="{Binding Path=Value, ElementName=thresholdSlider, StringFormat={}{0:N0}}" FontFamily="Arial Black" FontSize="15" VerticalAlignment="Center"/>
+
+            <Separator Opacity="0" Width="5"/>
+
+            <Rectangle Fill="SlateBlue" Width="1"/>
+            
+            <Separator Opacity="0" Width="5"/>
+
+            <TextBlock Text="K" FontFamily="Arial Black" FontSize="15" VerticalAlignment="Center"/>
+
+            <Separator Opacity="0" Width="5"/>
+            
+            <TextBox x:Name="textBoxK" Text="0,01" FontFamily="Arial Black" MinWidth="70" FontSize="15" VerticalAlignment="Center" HorizontalContentAlignment="Center"/>
+        </StackPanel>
     </Grid>
 </Window>
 

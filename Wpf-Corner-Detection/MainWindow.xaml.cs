@@ -54,32 +54,31 @@ namespace Wpf_Corner_Detection
                 var img = new Bitmap(imagePath);
                 var outputImg = img.ToImage<Bgr, byte>();
 
-                //var gray = outputImg.Convert<Gray, byte>().ThresholdBinaryInv(new Gray(200), new Gray(255));
                 var gray = outputImg.Convert<Gray, byte>();
 
                 var corners = new Mat();
-                CvInvoke.CornerHarris(gray, corners, 2);
+
+                CvInvoke.CornerHarris(gray, corners, 2, k: Convert.ToDouble(textBoxK.Text));
                 CvInvoke.Normalize(corners, corners, 255, 0, Emgu.CV.CvEnum.NormType.MinMax);
 
                 Matrix<float> matrix = new Matrix<float>(corners.Rows, corners.Cols);
                 corners.CopyTo(matrix);
+
+                int threshold = Convert.ToInt32(thresholdSlider.Value);
                 using (Graphics g = Graphics.FromImage(img))
                 {
-                    var pen = new System.Drawing.Pen(System.Drawing.Color.DarkViolet, 3);
-                    for (int i = 0; i < matrix.Rows; i++)
+                    var pen = new System.Drawing.Pen(System.Drawing.Color.DarkViolet, 1);
+                    for (int i = 0; i < corners.Rows; i++)
                     {
-                        for (int j = 0; j < matrix.Cols; j++)
+                        for (int j = 0; j < corners.Cols; j++)
                         {
-                            if (matrix[i, j] > 100)
+                            if (matrix[i, j] > threshold)
                             {
-                                //CvInvoke.Circle(outputImg, new System.Drawing.Point(j, i), 1, new MCvScalar(0, 150, 255), 25);
                                 g.DrawEllipse(pen, new System.Drawing.Rectangle(j - 3, i - 3, 6, 6));
                             }
                         }
                     }
                 }
-                //outputImg.AsBitmap().Save("test.png", ImageFormat.Png);
-                //imageResult.Source = BitmapToBitmapImage(outputImg.AsBitmap());
                 imageResult.Source = BitmapToBitmapImage(img);
             }
             catch(Exception e1)
