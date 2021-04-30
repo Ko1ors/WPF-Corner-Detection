@@ -2,22 +2,12 @@
 using Emgu.CV.Structure;
 using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Wpf_Corner_Detection
 {
@@ -26,7 +16,10 @@ namespace Wpf_Corner_Detection
     /// </summary>
     public partial class MainWindow : Window
     {
-        string imagePath;
+        private string imagePath;
+
+        private RadioButton radioButton;
+
 
         public MainWindow()
         {
@@ -48,9 +41,16 @@ namespace Wpf_Corner_Detection
 
         private void processButton_Click(object sender, RoutedEventArgs e)
         {
+            if (radioButton.Content.ToString().Contains("Harris"))
+                HarrisDetector();
+            else if (radioButton.Content.ToString().Contains("FAST"))
+                FASTFeatureDetector();
+        }
+
+        public void HarrisDetector()
+        {
             try
             {
-                // var img = BitmapImageToBitmap(image.Source as BitmapImage);
                 var img = new Bitmap(imagePath);
                 var outputImg = img.ToImage<Bgr, byte>();
 
@@ -67,21 +67,53 @@ namespace Wpf_Corner_Detection
                 int threshold = Convert.ToInt32(thresholdSlider.Value);
                 using (Graphics g = Graphics.FromImage(img))
                 {
-                    var pen = new System.Drawing.Pen(System.Drawing.Color.DarkViolet, 1);
+                    var pen = new Pen(Color.DarkViolet, 1);
                     for (int i = 0; i < corners.Rows; i++)
                     {
                         for (int j = 0; j < corners.Cols; j++)
                         {
                             if (matrix[i, j] > threshold)
                             {
-                                g.DrawEllipse(pen, new System.Drawing.Rectangle(j - 3, i - 3, 6, 6));
+                                g.DrawEllipse(pen, new Rectangle(j - 3, i - 3, 6, 6));
                             }
                         }
                     }
                 }
+
                 imageResult.Source = BitmapToBitmapImage(img);
             }
-            catch(Exception e1)
+            catch (Exception e1)
+            {
+                MessageBox.Show("Error: " + e1.Message);
+            }
+        }
+
+
+        public void FASTFeatureDetector()
+        {
+            try
+            {
+                var img = new Bitmap(imagePath);
+                var outputImg = img.ToImage<Bgr, byte>();
+                var gray = outputImg.Convert<Gray, byte>();
+
+                var detector = new Emgu.CV.Features2D.FastFeatureDetector();
+
+                var keyPoints = detector.Detect(gray);
+
+                using (Graphics g = Graphics.FromImage(img))
+                {
+                    var pen = new Pen(Color.DarkViolet, 1);
+
+                    foreach (var kp in keyPoints)
+                    {
+                        g.DrawEllipse(pen, new RectangleF(kp.Point.X-3, kp.Point.Y-3, 6, 6));
+                    }
+                }
+
+                imageResult.Source = BitmapToBitmapImage(img);
+            }
+            catch (Exception e1)
             {
                 MessageBox.Show("Error: " + e1.Message);
             }
@@ -117,6 +149,13 @@ namespace Wpf_Corner_Detection
 
                 return new Bitmap(bitmap);
             }
+        }
+
+        private void RadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            var rb = sender as RadioButton;
+            if (rb.IsChecked.Value)
+                radioButton = rb;
         }
     }
 }
