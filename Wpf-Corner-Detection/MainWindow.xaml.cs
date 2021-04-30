@@ -1,17 +1,14 @@
 ﻿using Emgu.CV;
 using Emgu.CV.Features2D;
 using Emgu.CV.Structure;
-using Emgu.CV.Util;
 using Microsoft.Win32;
 using System;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
-using static Emgu.CV.Features2D.FastFeatureDetector;
 
 namespace Wpf_Corner_Detection
 {
@@ -24,10 +21,18 @@ namespace Wpf_Corner_Detection
 
         private DetectionMethod method;
 
+        private Pen pen;
+        private Brush brush;
+        private Font font;
+
 
         public MainWindow()
         {
             InitializeComponent();
+
+            pen = new Pen(Color.DarkViolet, 1);
+            brush = new SolidBrush(Color.Cyan);
+            font = new Font("Arial", 10);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -104,25 +109,30 @@ namespace Wpf_Corner_Detection
                 int threshold = Convert.ToInt32(thresholdSlider.Value);
                 var nonmaxSupression = checkBoxSuppresion.IsChecked.Value;
                 var useFiltering = checkBoxUseAngleFiltering.IsChecked.Value;
+                var showAngles = checkBoxShowAngles.IsChecked.Value;
 
                 var lowerLimit = Convert.ToDouble(textBoxLowerLimit.Text);
                 var upperLimit = Convert.ToDouble(textBoxUpperLimit.Text);
+
                 Feature2D detector;
                 if (useFiltering)
-                    detector = new Emgu.CV.Features2D.ORBDetector(fastThreshold: threshold);
+                    detector = new ORBDetector(fastThreshold: threshold);
                 else
-                    detector = new Emgu.CV.Features2D.FastFeatureDetector(threshold: threshold, nonmaxSupression: nonmaxSupression);
+                    detector = new FastFeatureDetector(threshold: threshold, nonmaxSupression: nonmaxSupression);
 
                 var keyPoints = detector.Detect(gray);
 
                 using (Graphics g = Graphics.FromImage(img))
                 {
-                    var pen = new Pen(Color.DarkViolet, 1);
 
                     foreach (var kp in keyPoints)
                     {
-                            if (!useFiltering || (kp.Angle >= lowerLimit && kp.Angle <= upperLimit))
-                                g.DrawEllipse(pen, new RectangleF(kp.Point.X - 3, kp.Point.Y - 3, 6, 6));
+                        if (!useFiltering || (kp.Angle >= lowerLimit && kp.Angle <= upperLimit))
+                        {
+                            g.DrawEllipse(pen, new RectangleF(kp.Point.X - 3, kp.Point.Y - 3, 6, 6));
+                            if (showAngles && useFiltering)
+                                g.DrawString(kp.Angle.ToString("0"), font, brush, kp.Point);
+                        }
                     }
                 }
 

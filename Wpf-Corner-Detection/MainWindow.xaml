@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Wpf_Corner_Detection"
         mc:Ignorable="d"
-        Title="MainWindow" Height="500" Width="800">
+        Title="MainWindow" Height="500" Width="900">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="35"/>
@@ -108,6 +108,14 @@
                             </StackPanel>
                             
                         </StackPanel>
+
+                        <Separator Opacity="0" Width="3"/>
+
+                        <Rectangle Fill="SlateBlue" Width="1"/>
+
+                        <Separator Opacity="0" Width="3"/>
+
+                        <CheckBox x:Name="checkBoxShowAngles" Content="show angles" FontFamily="Arial Black" FontSize="12" VerticalAlignment="Center"/>
                     </StackPanel>
                 </StackPanel>
             </GroupBox>
