@@ -89,6 +89,11 @@ namespace Wpf_Corner_Detection
                     }
                 }
 
+                outputImg.Dispose();
+                gray.Dispose();
+                corners.Dispose();
+                matrix.Dispose();
+
                 imageResult.Source = BitmapToBitmapImage(img);
             }
             catch (Exception e1)
@@ -135,6 +140,10 @@ namespace Wpf_Corner_Detection
                         }
                     }
                 }
+
+                outputImg.Dispose();
+                gray.Dispose();
+                detector.Dispose();
 
                 imageResult.Source = BitmapToBitmapImage(img);
             }
